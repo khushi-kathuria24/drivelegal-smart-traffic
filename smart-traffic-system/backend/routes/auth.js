@@ -37,7 +37,12 @@ function userPayload(user) {
     name: user.name,
     email: user.email,
     role: user.role,
-    vehicleNumber: user.vehicleNumber
+    authority: user.authority,
+    department: user.department,
+    badgeNumber: user.badgeNumber,
+    vehicleNumber: user.vehicleNumber,
+    agentType: user.agentType,
+    jurisdiction: user.jurisdictionArea
   };
 }
 
@@ -66,6 +71,57 @@ router.post('/register', async (req, res) => {
       role: 'citizen',
       phone,
       vehicleNumber
+    });
+    await user.save();
+
+    const { accessToken, refreshToken, permissions } = await issueTokens(user, req);
+
+    res.status(201).json({
+      token: accessToken,
+      accessToken,
+      refreshToken,
+      permissions,
+      user: userPayload(user)
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Authority-based registration (Road Authority, Municipal Corp, Traffic Police, Agents)
+router.post('/register/authority', async (req, res) => {
+  try {
+    const { name, email, password, phone, authority, department, badgeNumber, jurisdictionArea, agentType } = req.body;
+
+    const validAuthorities = ['road_authority', 'municipal_corp', 'traffic_police', 'system'];
+    if (!validAuthorities.includes(authority)) {
+      return res.status(400).json({ message: 'Invalid authority' });
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'User already exists' });
+    }
+
+    // Map authority to role
+    const roleMap = {
+      road_authority: 'road_authority',
+      municipal_corp: 'municipal_corp',
+      traffic_police: 'traffic_police',
+      system: 'agent'
+    };
+
+    const user = new User({
+      name,
+      email,
+      password,
+      role: roleMap[authority],
+      authority,
+      department,
+      badgeNumber,
+      jurisdictionArea,
+      agentType: authority === 'system' ? agentType : null,
+      phone
     });
     await user.save();
 

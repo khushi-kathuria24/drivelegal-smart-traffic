@@ -26,6 +26,10 @@ import challanRoutes from './routes/challanRoutes.js';
 import adminReportsRoutes from './routes/adminReports.js';
 import emergencyVehicleRoutes from './routes/emergencyRoutes.js';
 import parkingAmenitiesRoutes from './routes/parkingAmenities.js';
+import agentRoutes from './routes/agentRoutes.js';
+// import authorityRoutes from './routes/authorityRoutes.js'; // TODO: Fix middleware exports
+import advancedRoutes from './routes/advancedRoutes.js';
+import RealtimeAgentService from './services/realtimeAgentService.js';
 import { initializeTrafficSimulation } from './services/trafficSimulator.js';
 import { ensureUploadDirs } from './services/uploadService.js';
 import { AdminCitizenSyncService } from './services/adminCitizenSyncService.js';
@@ -152,11 +156,20 @@ app.use('/api/signal-coordination', signalCoordinationRoutes);
 // Challan management and payment
 app.use('/api/challans', challanRoutes);
 
+// Authority-specific endpoints (Road Authority, Municipal Corp, Traffic Police, DriveLegal)
+// app.use('/api/authority', authorityRoutes); // TODO: Fix middleware exports
+
 // Admin reports and daily analytics
 app.use('/api/admin-reports', adminReportsRoutes);
 
 // Emergency vehicle detection and green corridor management
 app.use('/api/emergency-vehicles', emergencyVehicleRoutes);
+
+// Intelligent Traffic Agents (L1, L2, L3)
+app.use('/api/agents', agentRoutes);
+
+// Advanced Features (ML, AI, Insights)
+app.use('/api/advanced', advancedRoutes);
 
 io.on('connection', (socket) => {
   console.log('🔗 Client connected:', socket.id);
@@ -232,6 +245,11 @@ async function startServer() {
 
     await seedDefaultUsers();
     await initializeTrafficSimulation(io);
+
+    // Initialize Real-Time Agent Service
+    const realtimeService = new RealtimeAgentService(io);
+    realtimeService.startPeriodicBroadcasts();
+    console.log('✅ Real-time Agent Service initialized');
 
     const server = httpServer.listen(env.PORT, '0.0.0.0', () => {
       console.log('====================================================');

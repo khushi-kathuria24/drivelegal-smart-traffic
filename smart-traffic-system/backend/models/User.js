@@ -23,9 +23,22 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['admin', 'citizen', 'drivelegal'],
+      enum: ['road_authority', 'municipal_corp', 'traffic_police', 'citizen', 'drivelegal', 'agent'],
       default: 'citizen',
       index: true
+    },
+    authority: {
+      type: String,
+      enum: ['road_authority', 'municipal_corp', 'traffic_police', 'individual', 'system'],
+      default: 'individual'
+    },
+    department: String,
+    badgeNumber: String,
+    jurisdictionArea: String,
+    agentType: {
+      type: String,
+      enum: ['junction_agent_l1', 'regional_coordinator_l2', 'city_governor_l3', null],
+      default: null
     },
     phone: {
       type: String,
@@ -43,7 +56,12 @@ const userSchema = new mongoose.Schema(
       default: true
     },
     lastLogin: Date,
-    profilePicture: String
+    profilePicture: String,
+    metadata: {
+      assignedZones: [String],
+      trafficAuthority: String,
+      reportingTo: String
+    }
   },
   {
     timestamps: true
