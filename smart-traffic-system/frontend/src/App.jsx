@@ -6,6 +6,7 @@ import { io } from 'socket.io-client';
 import Login from './pages/Login';
 import AdminDashboard from './pages/AdminDashboard';
 import CitizenDashboard from './pages/CitizenDashboard';
+import DriveLegalDashboard from './pages/DriveLegalDashboard';
 
 
 function App() {
@@ -16,31 +17,8 @@ function App() {
     const initializeAuth = async () => {
       const token = localStorage.getItem('token');
       const userData = localStorage.getItem('user');
-      let currentUserData = userData ? JSON.parse(userData) : null;
-      
-      // Auto-login default citizen if visiting any citizen route
-      if (window.location.pathname.includes('/citizen')) {
-        if (!token || !currentUserData || currentUserData.role !== 'citizen') {
-          try {
-            const { data } = await axios.post('/api/auth/login', {
-              email: 'citizen@example.com',
-              password: 'citizen123'
-            });
-            const accessToken = data.accessToken || data.token;
-            localStorage.setItem('token', accessToken);
-            if (data.refreshToken) {
-              localStorage.setItem('refreshToken', data.refreshToken);
-            }
-            localStorage.setItem('user', JSON.stringify(data.user));
-            currentUserData = data.user;
-          } catch (error) {
-            console.error('Silent citizen login failed:', error);
-          }
-        }
-      }
-      
-      if (token && currentUserData) {
-        setUser(currentUserData);
+      if (token && userData) {
+        setUser(JSON.parse(userData));
       }
       setLoading(false);
     };
@@ -130,7 +108,7 @@ function App() {
       <Routes>
         <Route
           path="/login"
-          element={user ? <Navigate to={user.role === 'admin' ? '/admin' : '/citizen'} /> : <Login onLogin={handleLogin} />}
+          element={user ? <Navigate to={user.role === 'admin' ? '/admin' : user.role === 'drivelegal' ? '/drivelegal' : '/citizen'} /> : <Login onLogin={handleLogin} />}
         />
         <Route
           path="/admin/*"
@@ -141,8 +119,12 @@ function App() {
           element={user?.role === 'citizen' ? <CitizenDashboard user={user} onLogout={handleLogout} /> : <Navigate to="/login" />}
         />
         <Route
+          path="/drivelegal/*"
+          element={user?.role === 'drivelegal' ? <DriveLegalDashboard user={user} onLogout={handleLogout} /> : <Navigate to="/login" />}
+        />
+        <Route
           path="/"
-          element={<Navigate to={user ? (user.role === 'admin' ? '/admin' : '/citizen') : '/login'} />}
+          element={<Navigate to={user ? (user.role === 'admin' ? '/admin' : user.role === 'drivelegal' ? '/drivelegal' : '/citizen') : '/login'} />}
         />
       </Routes>
     </BrowserRouter>

@@ -233,6 +233,11 @@ export default function Login({ onLogin }) {
                     <p className="text-gray-400 mt-1">Pass: admin123</p>
                   </div>
                   <div className="flex-1 bg-white p-3 rounded border border-gray-200 shadow-sm text-center">
+                    <p className="font-bold text-[#0F172A] mb-1">DriveLegal</p>
+                    <p>drivelegal@example.com</p>
+                    <p className="text-gray-400 mt-1">Pass: drivelegal123</p>
+                  </div>
+                  <div className="flex-1 bg-white p-3 rounded border border-gray-200 shadow-sm text-center">
                     <p className="font-bold text-[#0F172A] mb-1">Citizen</p>
                     <p>citizen@example.com</p>
                     <p className="text-gray-400 mt-1">Pass: citizen123</p>

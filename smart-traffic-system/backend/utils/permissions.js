@@ -32,6 +32,12 @@ export const PERMISSIONS_BY_ROLE = {
     'emergency:read',
     'payment:create:own',
     'payment:view:own'
+  ],
+  drivelegal: [
+    'traffic:read',
+    'road-issues:read',
+    'parking:read',
+    'fine:read:own'
   ]
 };
 

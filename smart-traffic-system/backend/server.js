@@ -107,6 +107,19 @@ async function seedDefaultUsers() {
     await citizen.save();
     console.log(`Default citizen user created (${env.DEFAULT_CITIZEN_EMAIL})`);
   }
+
+  const drivelegalExists = await User.findOne({ email: 'drivelegal@example.com' });
+  if (!drivelegalExists) {
+    const drivelegal = new User({
+      name: 'DriveLegal User',
+      email: 'drivelegal@example.com',
+      password: 'drivelegal123',
+      role: 'drivelegal',
+      phone: '9876543211'
+    });
+    await drivelegal.save();
+    console.log(`Default drivelegal user created (drivelegal@example.com)`);
+  }
 }
 
 app.use('/api/auth', authRoutes);
