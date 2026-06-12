@@ -9,7 +9,7 @@
     "dev:traffic-frontend": "npm run dev --prefix smart-traffic-system/frontend",
     "dev:traffic-backend": "npm run dev --prefix smart-traffic-system/backend",
     "dev:traffic-all": "npx concurrently \"npm run dev:traffic-backend\" \"npm run dev:traffic-frontend\"",
-    "dev:all": "npx concurrently \"npm run dev:drivelegal\" \"npm run dev:traffic-backend\" \"npm run dev:traffic-frontend\"",
+    "dev:all": "npx concurrently \"npm run dev:traffic-backend\" \"npm run dev:traffic-frontend\"",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
