@@ -18,6 +18,7 @@ import {
   Settings,
   HardDrive,
   Clock,
+  Radio,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -31,6 +32,8 @@ const navigation = [
   { name: 'Geo-Zones', href: '/geo-zones', icon: MapPin },
   { name: 'Documents', href: '/documents', icon: FileText },
   { name: 'Police Portal', href: '/police-portal', icon: Users },
+  { name: 'Traffic Admin (AI)', href: '/traffic-admin', icon: Radio },
+  { name: 'Citizen Traffic Portal', href: '/traffic-citizen', icon: ShieldAlert },
   { name: 'Offline Sync', href: '/sync', icon: HardDrive },
   { name: 'Settings', href: '/settings', icon: Settings },
 ]
