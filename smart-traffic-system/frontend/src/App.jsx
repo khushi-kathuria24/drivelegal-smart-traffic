@@ -10,16 +10,43 @@ import CitizenDashboard from './pages/CitizenDashboard';
 
 function App() {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
-    if (token && userData) {
-      setUser(JSON.parse(userData));
-    }
+    const initializeAuth = async () => {
+      const token = localStorage.getItem('token');
+      const userData = localStorage.getItem('user');
+      let currentUserData = userData ? JSON.parse(userData) : null;
+      
+      // Auto-login default citizen if visiting any citizen route
+      if (window.location.pathname.includes('/citizen')) {
+        if (!token || !currentUserData || currentUserData.role !== 'citizen') {
+          try {
+            const { data } = await axios.post('/api/auth/login', {
+              email: 'citizen@example.com',
+              password: 'citizen123'
+            });
+            const accessToken = data.accessToken || data.token;
+            localStorage.setItem('token', accessToken);
+            if (data.refreshToken) {
+              localStorage.setItem('refreshToken', data.refreshToken);
+            }
+            localStorage.setItem('user', JSON.stringify(data.user));
+            currentUserData = data.user;
+          } catch (error) {
+            console.error('Silent citizen login failed:', error);
+          }
+        }
+      }
+      
+      if (token && currentUserData) {
+        setUser(currentUserData);
+      }
+      setLoading(false);
+    };
+
+    initializeAuth();
   }, []);
-
-
 
   useEffect(() => {
     const socket = io(import.meta.env.VITE_BACKEND_URL || 'http://localhost:5001', {
@@ -88,6 +115,14 @@ function App() {
       setUser(null);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-dark-900">
+        <div className="w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <BrowserRouter>
